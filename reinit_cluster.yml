@@ -1,0 +1,62 @@
+---
+- hosts: all
+  become: True
+  #become_user: root
+  gather_facts: false
+  vars:
+    cluster_name: test_cluster_pgcl
+    postgres_version: "14"
+  tasks:    
+      - name: disable firewalld
+        ansible.builtin.service:
+          name: firewalld
+          state: stopped
+          enabled: No    
+      - name: Disable SELinux
+        selinux: 
+          state: disabled
+      
+      - name: stop patroni      
+        ansible.builtin.service:
+          name: patroni
+          state: stopped
+          enabled: Yes
+      
+      - name: delete raft
+        file:
+          path: /pg_data/raft
+          state: absent
+      
+      - name: delete logs
+        file:
+          path: /pg_log/patroni
+          state: absent
+      
+      - name: create folders
+        ansible.builtin.file:
+          path: "{{ item }}"
+          state: directory
+          mode: '0700'
+          owner: postgres
+          group: postgres
+        loop:
+          - /home/postgres
+          - /pg_log/postgres
+          - /pg_log/patroni
+          - /pg_data
+          - /pg_log
+          - /pg_data/{{ cluster_name }}/{{ postgres_version }}
+          - /pg_data/virtualenv
+          - /pg_data/raft
+          - /pg_data/patroni
+          - /pg_data/ramdisk/pg_stat_tmp   
+      
+      - name: restart patroni      
+        ansible.builtin.service:
+          name: patroni
+          state: started
+          enabled: Yes   
+
+      
+
+      

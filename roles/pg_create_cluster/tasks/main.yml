@@ -1,0 +1,72 @@
+---
+# tasks file for pg_create_cluster
+
+
+- name: add postgres in cron.allow
+  lineinfile:
+    path: /etc/cron.alow
+    line: postgres
+    create: yes
+  become_user: root
+
+- name: copy environement
+  copy: 
+    src: requirements.txt
+    dest: /pg_data/requirements.txt
+
+- name: create virtual env
+  pip:    
+    requirements: /pg_data/requirements.txt
+    virtualenv: /pg_data/virtualenv
+    virtualenv_python: python3.9
+  environment:
+    PATH: "{{ ansible_env.PATH }}:{{ ansible_user_dir }}/.local/bin"
+
+- name: set env
+  lineinfile:
+    path: /var/lib/pgsql/.bash_profile
+    state: present
+    line: 'source /pg_data/virtualenv/bin/activate'
+
+- name: debug variable
+  debug:
+    msg: "{{ cluster_ip }}"
+
+- name: deploy patroni.yaml from template  
+  template:
+    src: patroni.j2
+    dest: /pg_data/patroni/patroni.yaml
+- name: copy patroni.service
+  copy:
+    src: patroni.service
+    dest: /etc/systemd/system/patroni.service
+    mode: 644
+  become_user: root
+- name: copy patroni.env
+  copy:
+    src: patroni.env
+    dest: /etc/sysconfig/patroni.env
+    mode: 644
+  become_user: root
+
+# - name: copy patroni to /usr/bin
+#   copy:
+#     src: /pg_data/virtualenv/bin/patroni
+#     dest: /usr/bin/patroni
+#     remote_src: yes
+#     mode: '0655'
+#   become_user: root
+# - name: stop postgres.service
+#   service: 
+#     name: postgres.service 
+#     state: stopped 
+#     enabled: No
+#   become_user: root
+
+- name: start patroni.service
+  service: 
+    name: patroni.service 
+    state: restarted 
+    enabled: yes
+    daemon_reload: yes
+  become_user: root

@@ -1,0 +1,4 @@
+[centos8s_repo]
+name=yandex repo for centos8s  BaseOS
+baseurl=https://mirror.yandex.ru/centos/8-stream/BaseOS/x86_64/os/
+enabled=1

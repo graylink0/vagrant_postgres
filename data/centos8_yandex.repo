@@ -1,0 +1,4 @@
+[centos8s_repo]
+name=yandex repo for centos8s  aapstream
+baseurl=https://mirror.yandex.ru/centos/8-stream/AppStream/x86_64/os/
+enabled=1

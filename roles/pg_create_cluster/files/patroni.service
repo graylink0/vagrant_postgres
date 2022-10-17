@@ -1,0 +1,25 @@
+[Unit]
+Description=Runners to orchestrate a high-availability PostgreSQL
+After=syslog.target network.target
+ 
+[Service]
+Type=simple
+ 
+User=postgres
+Group=postgres
+ 
+# Можно добавить пути до необходимых библиотек
+# Environment=LD_LIBRARY_PATH=/opt/rh/rh-postgresql96/root/lib64:$LD_LIBRARY_PATH
+#Environment="PATH=/pg_data/virtualenv/bin:/usr/lcal/bin:/usr/bin:/usr/local/sbin:/usr/sbin"
+#EvironmentFile="/etc/sysconfig/patroni.env"
+WorkingDirectory=/pg_data/virtualenv/bin
+ExecStart=/pg_data/virtualenv/bin/patroni /pg_data/patroni/patroni.yaml
+ 
+KillMode=process
+ 
+TimeoutSec=30
+ 
+Restart=no
+ 
+[Install]
+WantedBy=multi-user.target

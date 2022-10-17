@@ -1,0 +1,171 @@
+---
+- hosts: all
+  become: True
+  #become_user: root
+  gather_facts: false
+  vars:
+    cluster_name: test_cluster_pgcl
+    postgres_version: "14"
+  tasks:
+    - name: prepare servers
+      block:
+      - name: create lvl volume pg_data
+        community.general.lvol:
+          vg: cs_centos8s
+          lv: pg_data
+          size: 15G      
+      - name: Create a xfs filesystem on /dev/cs_centos8s/pg_data
+        filesystem:
+          fstype: xfs
+          dev: /dev/cs_centos8s/pg_data
+      - name: Mount up device by label
+        mount:
+          path: /pg_data
+          src: /dev/cs_centos8s/pg_data
+          fstype: xfs
+          state: mounted
+
+      - name: disable firewalld
+        ansible.builtin.service:
+          name: firewalld
+          state: stopped
+          enabled: No
+      
+      - name: create lvl volume pg_log
+        community.general.lvol:
+          vg: cs_centos8s
+          lv: pg_log
+          size: 1G      
+      - name: Create a xfs filesystem on /dev/cs_centos8s/pg_data
+        filesystem:
+          fstype: xfs
+          dev: /dev/cs_centos8s/pg_log
+
+      - name: Mount up device by label
+        mount:
+          path: /pg_log
+          src: /dev/cs_centos8s/pg_log
+          fstype: xfs
+          state: mounted
+
+      - name: add repository postgresql
+        dnf:
+          name: /vagrant/data/pgdg-redhat-repo-latest.noarch.rpm
+          disable_gpg_check: True
+          state: present
+      - name: diable postgresql module
+        shell:
+          cmd: sudo dnf -qy module disable postgresql        
+  
+      - name: install postgresql
+        dnf:
+          name: "{{ item  }}"
+          state: present
+        loop:
+        - postgresql14-server
+        - postgresql14-contrib
+        - pgbouncer
+        - nmap
+        - mc
+        - python39
+        - python39-libs
+        - python39-devel
+        - python39-pip
+        - libselinux-python3
+        - libyaml
+        - gcc
+
+      - name: Disable SELinux
+        selinux: 
+          state: disabled
+
+      - name: delete pip3.6 aliiases      
+        ansible.builtin.file:
+          path: "{{ item  }}"
+          state: absent
+        loop:
+        - /usr/local/bin/pip3
+        - /user/local/bin/pip
+
+
+      - name: set python3.9 default
+        alternatives:
+          name: "{{ item  }}"
+          path: /usr/bin/python3.9
+        loop:
+        - python3
+        - python
+
+      - name: set pip3.9 default
+        alternatives:
+          name: "{{ item }}"
+          link: /usr/bin{{ item }}
+          path: /usr/bin/pip3.9
+          priority: 10
+        loop:
+        - pip3
+        - pip
+
+      - name: install virtualenv
+        pip:
+          name: virtualenv
+          executable: pip3
+      
+      - name: create folders
+        ansible.builtin.file:
+          path: "{{ item }}"
+          state: directory
+          mode: '0700'
+          owner: postgres
+          group: postgres
+        loop:
+          - /home/postgres
+          - /pg_log/postgres
+          - /pg_log/patroni
+          - /pg_data
+          - /pg_log
+          - /pg_data/{{ cluster_name }}/{{ postgres_version }}
+          - /pg_data/virtualenv
+          - /pg_data/raft
+          - /pg_data/patroni
+          - /pg_data/ramdisk/pg_stat_tmp
+      - name: Allow the Vagrant user to run any commands as alice with sudo -u postgres
+        community.general.sudoers:
+          name: vagrant-do-as-postgres
+          state: present
+          user: vagrant
+          runas: postgres
+          commands: ALL
+      - name: Allow the Vagrant user to run any commands as alice with sudo -u postgres
+        community.general.sudoers:
+          name: postgres-do-as-root
+          state: present
+          user: postgres
+          runas: root
+          commands: ALL
+      - name: set rsyslog daemon
+        lineinfile:
+          path:  /etc/rsyslog.conf
+          state: present
+          line: 'daemon.*                                                /var/log/daemon.log'
+      - name: restart rsyslog
+        service:
+          name: rsyslog.service
+          state: restarted 
+
+
+- hosts: db_servers  
+  tasks:
+    - name: manage postgresql      
+      block:      
+        
+        # - name: init db
+        #   shell:
+        #     cmd: /usr/pgsql-14/bin/postgresql-14-setup initdb
+        #   ignore_errors: yes
+        
+        - name: add role pg_create_cluster
+          include_role:
+            name: pg_create_cluster            
+      become: True
+      become_user: postgres

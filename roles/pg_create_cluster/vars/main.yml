@@ -1,0 +1,9 @@
+---
+# vars file for pg_create_cluster
+cluster_name: test_cluster_pgcl
+cluster_ip:
+  - 192.168.2.11
+  - 192.168.2.12
+  - 192.168.2.13
+replication_password: "123456"
+postgres_password: "123456"

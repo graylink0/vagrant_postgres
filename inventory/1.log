@@ -1,0 +1,48 @@
+==> mgr: You assigned a static IP ending in ".1" to this machine.
+==> mgr: This is very often used by the router and can cause the
+==> mgr: network to not work properly. If the network doesn't work
+==> mgr: properly, try changing this IP.
+==> mgr: Check for insecure vagrant key: OK (not present)
+==> mgr: Running provisioner: file...
+    mgr: C:\Users\grayl\.ssh\id_rsa.pub => ~/.ssh/authorized_keys
+==> mgr: Running provisioner: file...
+    mgr: C:\Users\grayl\.ssh\id_rsa => ~/.ssh/id_rsa
+==> mgr: Running provisioner: file...
+    mgr: C:\Users\grayl\.ssh\id_rsa.pub => ~/.ssh/id_rsa.pub
+==> mgr: Running provisioner: shell...
+    mgr: Running: inline script
+==> mgr: Running provisioner: shell...
+    mgr: Running: inline script
+==> mgr: Running provisioner: shell...
+==> mgr: Waiting for cleanup before exiting...
+    mgr: Running: inline script
+    mgr: Last metadata expiration check: 1:24:12 ago on Fri 29 Jul 2022 05:54:43 AM UTC.
+    mgr: Error:
+    mgr:  Problem 1: cannot install the best update candidate for package gcc-8.5.0-13.el8.x86_64
+    mgr:   - nothing provides libgcc >= 8.5.0-15.el8 needed by gcc-8.5.0-15.el8.x86_64
+    mgr:   - nothing provides libgomp = 8.5.0-15.el8 needed by gcc-8.5.0-15.el8.x86_64
+    mgr:  Problem 2: cannot install the best update candidate for package gcc-c++-8.5.0-13.el8.x86_64
+    mgr:   - nothing provides libstdc++ = 8.5.0-15.el8 needed by gcc-c++-8.5.0-15.el8.x86_64
+    mgr:  Problem 3: cannot install the best update candidate for package libstdc++-devel-8.5.0-13.el8.x86_64
+    mgr:   - nothing provides libstdc++(x86-64) = 8.5.0-15.el8 needed by libstdc++-devel-8.5.0-15.el8.x86_64
+    mgr:  Problem 4: package libtool-2.4.6-25.el8.x86_64 requires gcc(major) = 8, but none of the providers can be installed
+    mgr:   - package gcc-8.5.0-13.el8.x86_64 requires cpp = 8.5.0-13.el8, but none of the providers can be installed
+    mgr:   - cannot install both cpp-8.5.0-15.el8.x86_64 and cpp-8.5.0-13.el8.x86_64
+    mgr:   - cannot install the best update candidate for package libtool-2.4.6-25.el8.x86_64
+    mgr:   - cannot install the best update candidate for package cpp-8.5.0-13.el8.x86_64
+    mgr:   - nothing provides libgomp = 8.4.1-1.el8 needed by gcc-8.4.1-1.el8.x86_64
+    mgr:   - nothing provides libgomp = 8.4.1-2.1.el8 needed by gcc-8.4.1-2.1.el8.x86_64
+    mgr:   - nothing provides libgomp = 8.5.0-1.el8 needed by gcc-8.5.0-1.el8.x86_64
+    mgr:   - nothing provides libgomp = 8.5.0-10.el8 needed by gcc-8.5.0-10.el8.x86_64
+    mgr:   - nothing provides libgomp = 8.5.0-12.el8 needed by gcc-8.5.0-12.el8.x86_64
+    mgr:   - nothing provides libgcc >= 8.5.0-14.el8 needed by gcc-8.5.0-14.el8.x86_64
+    mgr:   - nothing provides libgomp = 8.5.0-14.el8 needed by gcc-8.5.0-14.el8.x86_64
+    mgr:   - nothing provides libgcc >= 8.5.0-15.el8 needed by gcc-8.5.0-15.el8.x86_64
+    mgr:   - nothing provides libgomp = 8.5.0-15.el8 needed by gcc-8.5.0-15.el8.x86_64
+    mgr:   - nothing provides libgomp = 8.5.0-2.el8 needed by gcc-8.5.0-2.el8.x86_64
+    mgr:   - nothing provides libgomp = 8.5.0-3.el8 needed by gcc-8.5.0-3.el8.x86_64
+    mgr:   - nothing provides libgomp = 8.5.0-4.el8_5 needed by gcc-8.5.0-4.el8_5.x86_64
+    mgr:   - nothing provides libgomp = 8.5.0-6.el8 needed by gcc-8.5.0-6.el8.x86_64
+    mgr:   - nothing provides libgomp = 8.5.0-7.el8 needed by gcc-8.5.0-7.el8.x86_64
+    mgr:   - nothing provides libgomp = 8.5.0-8.el8 needed by gcc-8.5.0-8.el8.x86_64
+    mgr: (try to add '--allowerasing' to command line to replace conflicting packages or '--skip-broken' to skip uninstallable packages or '--nobest' to use not only best candidate packages)
