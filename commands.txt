@@ -3,3 +3,5 @@
 ansible-playbook /vagrant/reinit_cluster.yml -i /vagrant/inventory/hosts.txt -u vagrant -l db_servers
 
 ansible-playbook /vagrant/reinit_cluster.yml -i /vagrant/inventory/hosts.txt -u vagrant -l db_servers
+
+---
