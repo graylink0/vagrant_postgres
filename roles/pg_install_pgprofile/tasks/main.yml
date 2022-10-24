@@ -1,0 +1,20 @@
+---
+# tasks file install pg_profile
+- name: install pg_profile
+  ansible.builtin.unarchive:
+    src: /vagrant/data/extensions/pg_profile--4.1.tar.gz
+    dest: /usr/pgsql-14/share/extension/
+    remote_src: yes
+  become: true
+  become_user: root
+
+- name: enable extensions   
+  community.postgresql.postgresql_ext:
+    name: "{{ item.name }}"
+    db: postgres
+    schema: "{{ item.shema }}"
+  loop:
+  - { name: 'dblink', shema: 'postgres' }
+  - { name: 'pg_stat_statements', shema: 'postgres' }
+  - { name: 'pg_profile', shema: 'profile' }
+
